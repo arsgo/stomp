@@ -29,6 +29,7 @@ func NewStomp(address string) (st *Stomp, err error) {
 
 //Send
 func (s *Stomp) Send(queue string, msg string) (err error) {
+	
 	err = s.conn.Send(
 		fmt.Sprintf("/queue/%s", queue), // destination
 		"text/plain",                    // content-type
