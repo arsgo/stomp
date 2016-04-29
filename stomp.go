@@ -3,7 +3,7 @@ package stomp
 import (
 	"fmt"
 
-	"github.com/go-stomp/stomp"
+	st "github.com/go-stomp/stomp"
 
 	//"github.com/gmallard/stompngo"
 	//"github.com/go-stomp/stomp"
@@ -13,14 +13,14 @@ import (
 
 //StompMQ manage stomp server
 type Stomp struct {
-	conn    *stomp.Conn
+	conn    *st.Conn
 	address string
 }
 
 //NewStompMQ
-func NewStomp(address string) (st *Stomp, err error) {
-	st = &Stomp{address: address}
-	st.conn, err = stomp.Dial("tcp", address)
+func NewStomp(address string) (s *Stomp, err error) {
+	s = &Stomp{address: address}
+	s.conn, err = st.Dial("tcp", address)
 	if err != nil {
 		return
 	}
@@ -34,14 +34,14 @@ func (s *Stomp) Send(queue string, msg string) (err error) {
 		fmt.Sprintf("/queue/%s", queue), // destination
 		"text/plain",                    // content-type
 		[]byte(msg),
-		stomp.SendOpt.Receipt,
-		stomp.SendOpt.Header("expires", "2049-12-31 23:59:59")) // body
+		st.SendOpt.Receipt,
+		st.SendOpt.Header("expires", "2049-12-31 23:59:59")) // body
 	return
 }
 
 //Subscribe
 func (s *Stomp) Consume(queue string, count int, call func(MsgHandler) bool) (err error) {
-	sub, err := s.conn.Subscribe(fmt.Sprintf("/queue/%s", queue), stomp.AckClient)
+	sub, err := s.conn.Subscribe(fmt.Sprintf("/queue/%s", queue), st.AckClient)
 	if err != nil {
 		return err
 	}
@@ -55,8 +55,6 @@ func (s *Stomp) Consume(queue string, count int, call func(MsgHandler) bool) (er
 
 	}
 	err = sub.Unsubscribe()
-	return
-
 	return
 }
 
