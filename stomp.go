@@ -20,7 +20,7 @@ type Stomp struct {
 //NewStompMQ
 func NewStomp(address string) (st *Stomp, err error) {
 	st = &Stomp{address: address}
-	st.conn, err = stomp.Dial("tcp", "192.168.1.1:61613")
+	st.conn, err = stomp.Dial("tcp", address)
 	if err != nil {
 		return
 	}
