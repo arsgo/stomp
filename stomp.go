@@ -1,11 +1,11 @@
 package stomp
 
 import (
-	"fmt"
+	"net"
 
-	st "github.com/go-stomp/stomp"
+	//	st "github.com/gmallard/stompngo"
 
-	//"github.com/gmallard/stompngo"
+	"github.com/gmallard/stompngo"
 	//"github.com/go-stomp/stomp"
 
 	//"github.com/gmallard/stompngo"
@@ -13,57 +13,10 @@ import (
 
 //StompMQ manage stomp server
 type Stomp struct {
-	conn    *st.Conn
+	conn    *stompngo.Connection
 	address string
 }
 
-//NewStompMQ
-func NewStomp(address string) (s *Stomp, err error) {
-	s = &Stomp{address: address}
-	s.conn, err = st.Dial("tcp", address)
-	if err != nil {
-		return
-	}
-	return
-}
-
-//Send
-func (s *Stomp) Send(queue string, msg string) (err error) {
-	
-	err = s.conn.Send(
-		fmt.Sprintf("/queue/%s", queue), // destination
-		"text/plain",                    // content-type
-		[]byte(msg),
-		st.SendOpt.Receipt,
-		st.SendOpt.Header("expires", "2049-12-31 23:59:59")) // body
-	return
-}
-
-//Subscribe
-func (s *Stomp) Consume(queue string, count int, call func(MsgHandler) bool) (err error) {
-	sub, err := s.conn.Subscribe(fmt.Sprintf("/queue/%s", queue), st.AckClient)
-	if err != nil {
-		return err
-	}
-	for i := 0; i < count; i++ {
-		msg := <-sub.C
-		handler := NewMessage(s, msg)
-		b := call(handler)
-		if b {
-			handler.Ack()
-		}
-
-	}
-	err = sub.Unsubscribe()
-	return
-}
-
-//Close
-func (s *Stomp) Close() {
-	s.conn.Disconnect()
-}
-
-/*
 //NewStompMQ
 func NewStomp(address string) (mq *Stomp, err error) {
 	mq = &Stomp{address: address}
@@ -71,7 +24,7 @@ func NewStomp(address string) (mq *Stomp, err error) {
 	if err != nil {
 		return
 	}
-	header := stompngo.Headers{"accept-version", "1.1"}
+	header := stompngo.Headers{}//"accept-version", "1.0"
 	mq.conn, err = stompngo.Connect(con, header)
 	return
 }
@@ -82,6 +35,7 @@ func (s *Stomp) Send(queue string, msg string) error {
 	return s.conn.Send(header, msg)
 }
 
+/*
 //Subscribe
 func (s *Stomp) Consume(queue string, call func(MsgHandler)) (err error) {
 	if !s.conn.Connected() {
@@ -94,14 +48,15 @@ func (s *Stomp) Consume(queue string, call func(MsgHandler)) (err error) {
 	if err != nil {
 		return
 	}
+
 	for {
-		msg := <-msgChan
-		call(NewMessage(s, msg))
+		<-msgChan
+		//call(NewMessage(s, msg))
 	}
 }
+*/
 
 //Close
 func (s *Stomp) Close() {
 	s.conn.Disconnect(stompngo.Headers{})
 }
-*/

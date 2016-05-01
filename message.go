@@ -1,6 +1,6 @@
 package stomp
 
-import  s "github.com/go-stomp/stomp"
+import  s "github.com/gmallard/stompngo"
 
 type MsgHandler interface {
 	Ack()
@@ -15,7 +15,8 @@ type StompMessage struct {
 
 //Ack
 func (m *StompMessage) Ack() {
-	m.s.conn.Ack(m.msg)
+//	m.s.conn.Ack(m.msg)
+	m.s.conn.Ack(m.msg.Headers)
 }
 func (m *StompMessage) GetMessage() string {
 	return m.Message
