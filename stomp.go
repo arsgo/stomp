@@ -24,7 +24,7 @@ func NewStomp(address string) (mq *Stomp, err error) {
 	if err != nil {
 		return
 	}
-	header := stompngo.Headers{}//"accept-version", "1.0"
+	header := stompngo.Headers{"accept-version", "1.1"}
 	mq.conn, err = stompngo.Connect(con, header)
 	return
 }
